@@ -15,7 +15,7 @@
 
 #define NUM_FRAMES 50
 
-void generate_frame(int frame_number) {
+void generate_frame(int frame_number, int num_threads) {
     double x = -0.74;
     double y =  0.13;
 
@@ -26,20 +26,26 @@ void generate_frame(int frame_number) {
     int max_iter = 4000;
 
     char command[256];
-    sprintf(command, "./mandel -x %f -y %f -m %d -s %f -o mandel%d.jpeg", x, y, max_iter, scale, frame_number);
+    sprintf(command, "./mandel -t %d -x %f -y %f -m %d -s %f -o mandel%d.jpeg", num_threads, x, y, max_iter, scale, frame_number);
     system(command);
 }
 
 
 void main(int argc, char *argv[]) {
-    if (argc != 2) {
-        printf("Error: Must use ./mandelmovie <number_of_processes>\n");
+    if (argc != 3) {
+        printf("Error: Must use ./mandelmovie <number_of_processes> <number of threads>\n");
         exit(1);
     }
 
     int num_processes = atoi(argv[1]);
-    if (num_processes <= 0) {
-        printf("Error: Number of processes must be a positive integer.\n");
+    if (num_processes <= 0 || num_processes > 50) {
+        printf("Error: Number of processes must be a positive integer between 1 and 50.\n");
+        exit(1);
+    }
+
+    int num_threads = atoi(argv[2]);
+    if (num_threads <= 0 || num_threads > 20) {
+        printf("Error: Number of threads must be a positive integer between 1 and 20.\n");
         exit(1);
     }
 
@@ -52,7 +58,7 @@ void main(int argc, char *argv[]) {
                 perror("Fork failed");
                 exit(1);
             } else if (pids[j] == 0) {
-                generate_frame(i + j);
+                generate_frame(i + j, num_threads);
                 exit(0);
             }
         }

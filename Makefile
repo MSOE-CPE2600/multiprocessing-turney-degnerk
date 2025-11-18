@@ -16,7 +16,7 @@ all: $(EXECUTABLE) $(MOVIE_EXEC)
 -include $(MOVIE_OBJ:.o=.d)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@ -lm
+	$(CC) $(OBJECTS) $(LDFLAGS) -o $@ -lm -lpthread
 
 $(MOVIE_EXEC): $(MOVIE_OBJ)
 	$(CC) $(MOVIE_OBJ) -o $@ -lm
@@ -26,4 +26,4 @@ $(MOVIE_EXEC): $(MOVIE_OBJ)
 	$(CC) -MM $< > $*.d
 
 clean:
-	rm -rf $(OBJECTS) $(MOVIE_OBJ) $(EXECUTABLE) $(MOVIE_EXEC) *.d *.jpeg *.mp4
+	rm -rf $(OBJECTS) $(MOVIE_OBJ) $(EXECUTABLE) $(MOVIE_EXEC) *.d *.jpeg *.mp4 *.jpg
