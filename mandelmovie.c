@@ -20,47 +20,61 @@ void generate_frame(int frame_number) {
     double y =  0.13;
 
     double start_scale = 0.20;
-    double end_scale   = 0.0001;
-    double zoom_factor = pow(end_scale / start_scale, (double)frame_number / NUM_FRAMES);
+    double end_scale   = 0.001;
+    double zoom_factor = pow(end_scale / start_scale,
+                             (double)frame_number / NUM_FRAMES);
     double scale = start_scale * zoom_factor;
-    int max_iter = 4000;
+    int max_iter = 500;
 
     char command[256];
-    sprintf(command, "./mandel -x %f -y %f -m %d -s %f -o mandel%d.jpeg", x, y, max_iter, scale, frame_number);
+    sprintf(command, "./mandel -x %f -y %f -m %d -s %f -o mandel%d.jpeg",
+            x, y, max_iter, scale, frame_number);
+
     system(command);
 }
 
 
-void main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
     if (argc != 2) {
         printf("Error: Must use ./mandelmovie <number_of_processes>\n");
         exit(1);
     }
 
-    int num_processes = atoi(argv[1]);
-    if (num_processes <= 0) {
-        printf("Error: Number of processes must be a positive integer.\n");
+    int max_procs = atoi(argv[1]);
+    if (max_procs <= 0) {
+        printf("Error: Number of processes must be positive.\n");
         exit(1);
     }
 
-    // For each process number until the maximum, fork and generates one frame (and refork) until all frames are generated
-    for (int i = 0; i < NUM_FRAMES; i += num_processes) {
-        pid_t pids[num_processes];
-        for (int j = 0; j < num_processes && (i + j) < NUM_FRAMES; j++) {
-            pids[j] = fork();
-            if (pids[j] < 0) {
+    int running = 0;
+    int frame = 0;
+
+    while (frame < NUM_FRAMES || running > 0) {
+
+        // Spawn new children if we have capacity and still have frames to generate
+        while (running < max_procs && frame < NUM_FRAMES) {
+            pid_t pid = fork();
+            if (pid < 0) {
                 perror("Fork failed");
                 exit(1);
-            } else if (pids[j] == 0) {
-                generate_frame(i + j);
+            }
+
+            if (pid == 0) {
+                generate_frame(frame);
                 exit(0);
             }
+
+            running++;
+            frame++;
         }
 
-        for (int j = 0; j < num_processes && (i + j) < NUM_FRAMES; j++) {
-            wait(NULL);
-        }
+        // Wait for child to finish
+        wait(NULL);
+        running--;
     }
 
+    // After all frames done, make video
     system("ffmpeg -framerate 10 -i mandel%d.jpeg -c:v libx264 -pix_fmt yuv420p mandelmovie.mp4");
+
+    return 0;
 }
