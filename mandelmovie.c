@@ -35,14 +35,20 @@ void generate_frame(int frame_number, int num_threads) {
 
 
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        printf("Error: Must use ./mandelmovie <number_of_processes>\n");
+    if (argc != 3) {
+        printf("Error: Must use ./mandelmovie <number_of_processes> <number_of_threads>\n");
         exit(1);
     }
 
     int max_procs = atoi(argv[1]);
     if (max_procs <= 0) {
         printf("Error: Number of processes must be positive.\n");
+        exit(1);
+    }
+
+    int num_threads = atoi(argv[2]);
+    if (max_procs <= 0) {
+        printf("Error: Number of threads must be positive.\n");
         exit(1);
     }
 
@@ -60,7 +66,7 @@ int main(int argc, char *argv[]) {
             }
 
             if (pid == 0) {
-                generate_frame(frame);
+                generate_frame(frame, num_threads);
                 exit(0);
             }
 

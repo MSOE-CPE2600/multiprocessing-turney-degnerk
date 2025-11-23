@@ -17,7 +17,6 @@ static int iteration_to_color( int i, int max );
 static int iterations_at_point( double x, double y, int max );
 static void compute_image( imgRawImage *img, double xmin, double xmax,
 									double ymin, double ymax, int max, int num_threads );
-									double ymin, double ymax, int max, int num_threads );
 static void show_help();
 
 
@@ -36,18 +35,13 @@ int main( int argc, char *argv[] )
 	int    image_height = 1000;
 	int    max = 1000;
 	int    num_threads = 1;
-	int    num_threads = 1;
 
 	// For each command line argument given,
 	// override the appropriate configuration value.
 
 	while((c = getopt(argc,argv,"t:x:y:s:W:H:m:o:h"))!=-1) {
-	while((c = getopt(argc,argv,"t:x:y:s:W:H:m:o:h"))!=-1) {
 		switch(c) 
 		{
-			case 't':
-				num_threads = atoi(optarg);
-				break;
 			case 't':
 				num_threads = atoi(optarg);
 				break;
