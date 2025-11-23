@@ -16,7 +16,8 @@ I used a thread data struct to ensure each thread had the image data it needed, 
 <img width="1817" height="976" alt="mandel" src="https://github.com/user-attachments/assets/d7f4d0b6-17af-49e1-bac5-11a9d8426393" />
 
 #### *Number of Processes and Threads versus Runtime*
-<img width="1764" height="900" alt="Picture1" src="https://github.com/user-attachments/assets/6798c79f-ca2e-4784-bd5d-5e7575054ae1" />
+Note: Runtime is in seconds
+<img width="1758" height="906" alt="Picture1" src="https://github.com/user-attachments/assets/c9fc9a2f-f8ba-4613-8c0b-8c3ed102b785" />
 
 ## Result Discussion
 
@@ -41,3 +42,4 @@ Overall, increasing the number of processes and threads generally sped up the pr
 The mandel video mp4 file is available in the repository. I have also provided it here.
 
 https://github.com/user-attachments/assets/0339f4bb-7d61-4995-a708-0ae1d6a0db68
+
